@@ -1,6 +1,7 @@
 <?php
 error_reporting(-1);
 ini_set('display_errors', 'On');
+ini_set('file_uploads', 'On');
 $mysql = new mysqli("localhost", "root", "onlyone!1", "imovies");
 session_start();
 $isLoggedIn = isset($_SESSION['uid']);
@@ -21,6 +22,8 @@ if ($isLoggedIn) {
 		if ($isLoggedIn) {
 			?>
 			<a href="?page=profile">Profile</a> |
+			<a href="?page=neucert">Request Certificate</a> |
+			<a href="?page=revoke">Revoke Certificate</a> |
 			<a href="?page=logout">Logout</a>
 			<?php
 		} else {
@@ -42,6 +45,12 @@ if ($isLoggedIn) {
 				break;
 			case "profile":
 				include("pages/profile.php");
+				break;
+			case "neucert":
+				include("pages/neucert.php");
+				break;
+			case "revoke":
+				include("pages/revoke.php");
 				break;
 			case "index":
 			default:
