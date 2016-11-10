@@ -1,7 +1,14 @@
 <?php
+error_reporting(-1);
+ini_set('display_errors', 'On');
 $mysql = new mysqli("localhost", "root", "onlyone!1", "imovies");
 session_start();
 $isLoggedIn = isset($_SESSION['uid']);
+if ($isLoggedIn) {
+	$uid = $_SESSION['uid'];
+	$query = $mysql->query("SELECT * FROM users WHERE uid='$uid'");
+	$user = $query->fetch_assoc();
+}
 ?>
 <html>
 	<head>
@@ -13,6 +20,7 @@ $isLoggedIn = isset($_SESSION['uid']);
 		// Header menu bar
 		if ($isLoggedIn) {
 			?>
+			<a href="?page=profile">Profile</a> |
 			<a href="?page=logout">Logout</a>
 			<?php
 		} else {
@@ -31,6 +39,9 @@ $isLoggedIn = isset($_SESSION['uid']);
 				break;
 			case "logout":
 				include("pages/logout.php");
+				break;
+			case "profile":
+				include("pages/profile.php");
 				break;
 			case "index":
 			default:
