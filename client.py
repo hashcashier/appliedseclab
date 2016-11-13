@@ -18,6 +18,11 @@ s.sendall(message)
 #buf = int(s.recv(buf))
 #s.send('OK')
 # receive message 
-data = s.recv(buf)
-print 'Received : ' , data , 
+data = ""
+while True: 
+  data_in= s.recv(buf)
+  if not data_in: break
+  data+=data_in
+
+print 'Received : ' , data  
 print 'To bed now'
