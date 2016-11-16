@@ -29,7 +29,7 @@ class ClientThread(threading.Thread):
     #  data+=data_in
     print data 
     #Parse data to retrieve Sender, Encrypted File E, Sign(Sender)
-    (sender, filename, E, sign, hash_E) = data.split("\n") #for tests TODO parse
+    (sender, filename, E, sign, hash_E) = data.split("---") #for tests TODO parse
     #verify Signature (is really sender) else raise an error
     if sender!=sign: #TODO retrieve Sender from signature
       print "Sender is not who they say they are"

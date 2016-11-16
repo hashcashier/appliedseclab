@@ -1,11 +1,28 @@
 import socket
 import sys
+from os.path import exists
+
+#check number of arguments
+if len(sys.argv) < 2:
+  print "Usage : python log_client <filename>"
+  sys.exit()
 
 buf = 1024
 myName = "Sender" #TODO CA or WS depending on the case
-filename = "log"
-myFile = "Pretend this is a file" #TODO take arg[1] as filename, open it, read it into variable
-encrypted = "This is encrypted" #TODO encrypt contents of "myfile" with AES?
+filename = sys.argv[1]
+
+#check if file exists
+if not exists(filename):
+  print "File not found"
+  sys.exit()
+
+#read from file
+fd = open(filename, "r") #TODO read bytes? depends on what file
+myFile = fd.read()
+fd.close()
+
+#encrypt, hash
+encrypted = myFile#TODO encrypt contents of "myfile" with AES?
 myHash = encrypted #TODO hash(encrypted)) 
 mySign = "Sender" #TODO signature of sender = sign(myName, myHash)
 saved = False
@@ -20,8 +37,8 @@ while not saved:
   print "Trying to connect to server at %s on port %d" %bs_address
   s.connect(bs_address)
 
-  #Sending data
-  data = myName+"\n"+filename+"\n"+encrypted+"\n"+mySign+"\n"+myHash
+  #Sending data #TODO what separator to use?
+  data = myName+"---"+filename+"---"+encrypted+"---"+mySign+"---"+myHash
   s.sendall(data)
 
   stat = s.recv(buf)
