@@ -3,6 +3,9 @@ import sys
 import threading
 import time
 from datetime import date
+from os.path import join
+
+log_dir ="./logs/" #TODO set this to correct place for logs
 
 buf= 1024
 
@@ -18,53 +21,46 @@ class ClientThread(threading.Thread):
   def run(self):
     counter =  0
     #Receive data
-    data = ""
-    while True:
-      data_in = self.socket.recv(buf)
-      if not data_in: break
-      data+=data_in 
+    data = self.socket.recv(buf) #TODO read more data?
+    #data = ""
+    #while True:
+    #  data_in = self.socket.recv(buf)
+    #  if not data_in: break
+    #  data+=data_in
+    print data 
     #Parse data to retrieve Sender, Encrypted File E, Sign(Sender)
-    (Sender, E, Sign) = ("sender", data, "sender") #for tests TODO parse
+    (sender, filename, E, sign, hash_E) = data.split("\n") #for tests TODO parse
     #verify Signature (is really sender) else raise an error
-    if Sender!=Sign: #TODO retrieve Sender from signature
+    if sender!=sign: #TODO retrieve Sender from signature
       print "Sender is not who they say they are"
       #send bad authentication to "sender"
       self.socket.sendall("Imposter")
       #cleanly close the connection
-      print "[-] Closing connection with "+ip+":"+port
+      print "[-] Closing connection with "+ip+":"+str(port)
       self.socket.close()
       return
-    #hash(E)
+    #retrieve the Nonce from the Sign = Signature(Sender Name, Nonce)
+    nonce=0
     hash_data = E #TODO actually hash it
-    #conn.send(E)
-    self.socket.sendall(E)
-    #Wait for sender to verify
-    OK = int(self.socket.recv(buf)) #can be 1 for OK, 0 for not OK
-    if not OK:
-      if counter <3:
-        #ask for resend
-        print "Requesting resend" 
-        self.socket.sendall("resend")
-        #increase send counter by one
-	counter+=1
-      else: 
-        #send and raise an error
-        print "Too many resends, suspect tampering"
-	self.socket.sendall("Unable to backup")
-        #cleanly close connection
-        print "[-] Closing connection with "+ip+":"+port
-	self.socket.close()
-        return
-    else: #All seems well, proceed
-      #open file named Sender_timestamp
-      timestamp = str(time.time())
-      filename = Sender+"_"+timestamp
-      fd = open(filename, "w")
-      #save E to file
-      fd.write(E)
-      #set file permission TODO ???
-      #send all ok
-      self.socket.sendall("Log saved at "+str(date.fromtimestamp(timestamp)))
+    if hash_data!=hash_E: #Integrity compromised
+      print "Integrity compromised"
+      self.socket.sendall("Integrity compromised")
+      print "[-] Closing connection with "+ip+":"+str(port)
+      self.socket.close()
+      return
+    #####
+    #  If we get here, we assume authentication and integrity are ok
+    #####
+
+    #open file named Sender_timestamp
+    timestamp = time.time()
+    filename = filename+"_"+sender+"_"+str(timestamp)
+    fd = open(join(log_dir,filename), "w")
+    #save E to file
+    fd.write(E)
+    #set file permission TODO ???
+    #send all ok
+    self.socket.sendall("Log saved at "+str(date.fromtimestamp(timestamp)))
       
     #wait for final ack
     print "Waiting for confirmation"
@@ -115,6 +111,6 @@ for t in threads:
   t.join()
 
 #Finish it all
-print "[-] Closing socket on server at % port %d" %server_address
+print "[-] Closing socket on server at %s port %d" %server_address
 s.close()
 print "[-] Hasta la bye, bye"
