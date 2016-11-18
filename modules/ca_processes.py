@@ -9,7 +9,7 @@ from certrev import *
 from os.path import exists, join
 from os import getcwd
 #the following line is necessary to check existence of files in Revocator.process(), otherwie it looks for certificates within code/modules
-cert_dir = getcwd()
+cert_dir = join(getcwd(), "certs")
 
 class Generator:
   '''
@@ -28,7 +28,7 @@ class Generator:
     self.serial_num = serial_num
    
     # response strings, must be the HTTP response that will eventually be sent
-    self.error_resp = "There was a problem in generation"
+    self.error_resp = "error generation"
     self.resp = "Something has been generated"
 
     ## about the issuer
@@ -48,7 +48,7 @@ class Generator:
     # write certificate to a file
     # create PKCS#12 archive containing: pkey, cert... TODO issuerCert?
     file_name = self.uname+".p12"
-    file = open(file_name, "wb")
+    file = open(join(cert_dir,file_name), "wb")
     p12 = crypto.PKCS12()
     p12.set_certificate(cert)
     p12.set_privatekey(pkey)
@@ -69,12 +69,12 @@ class Generator:
     content = ""
     if self.state == 1 : 
       hdr = "HTTP /1.1 200 OK\nContent-Type: application/x-pki12\nConnection: Closed\n\n"
-      in_file = open(self.resp,"rb")
+      in_file = open(join(cert_dir,self.resp),"rb")
       content = in_file.read()
     if self.state == -1 : 
       hdr = "HTTP /1.1 400 Bad Request\nContent-Type: text/plain\nConnection: Closed\n\n"
       content = self.error_resp
-    return hdr+content
+    return content #hdr+content
 
 class Revocator:
   """
@@ -89,7 +89,7 @@ class Revocator:
     self.crl = crl
     self.issuer = issuer
     self.reason = reason
-    self.error_resp = "There was an error in revocation"
+    self.error_resp = "error revocation"
     self.resp = "The certificate was revoked"
     self.state = 0
 
@@ -102,7 +102,7 @@ class Revocator:
     #print "path to file is :"+join(cert_dir,filename)
     if exists(join(cert_dir,filename)):
       #print "File exists"
-      cert = crypto.load_pkcs12(open(filename).read()).get_certificate()
+      cert = crypto.load_pkcs12(open(join(cert_dir,filename)).read()).get_certificate()
       return cert
     else:
       return
@@ -125,7 +125,7 @@ class Revocator:
     file.close()
     #TODO errors?
     self.state = 1
-    self.rep = filename
+    self.resp = filename
     return self.resp 
 
   def generate_response(self):
@@ -137,9 +137,9 @@ class Revocator:
     content = ""
     if self.state == 1 : 
       hdr = "HTTP /1.1 200 OK\nContent-Type: application/pkix-crl\nConnection: Closed\n\n"
-      in_file = open(self.resp,"rb")
+      in_file = open(join(cert_dir,self.resp),"rb")
       content = in_file.read()
     if self.state == -1 : 
       hdr = "HTTP /1.1 400 Bad Request\nContent-Type: text/plain\nConnection: Closed\n\n"
       content = self.error_resp
-    return hdr+content
+    return content#hdr+content

@@ -13,11 +13,12 @@ buf=1024
 ######################
 # get CA information #
 ######################
-gen_ca.create_ca_cert("./")
-issuer = (gen_ca.get_ca_cert("./"),gen_ca.get_ca_key("./"))
+cert_dir = "./certs/"
+gen_ca.create_ca_cert(cert_dir)
+issuer = (gen_ca.get_ca_cert(cert_dir),gen_ca.get_ca_key(cert_dir))
 serial = 1 #TODO randomize serial number
-gen_ca.create_crl("./", issuer)
-current_crl=gen_ca.get_crl("./")
+gen_ca.create_crl(cert_dir, issuer)
+current_crl=gen_ca.get_crl(cert_dir)
 
 class ClientThread(threading.Thread):
 
@@ -101,14 +102,16 @@ class ClientThread(threading.Thread):
     print "Received: "+data
     Object = self.parse(data)
     if Object==None:
-      resp = "HTTP /1.1  400 Bad Request\nContent-type: text/plain\n Connection: Closed\n\nParsing error"
+      #resp = "HTTP /1.1  400 Bad Request\nContent-type: text/plain\n Connection: Closed\n\nParsing error"
+      resp = "error"
       print resp
     else:
       f_name = Object.process()
       print "file processed: "+f_name
       resp = Object.generate_response()
-      print "Data processed: "+resp
-
+      print "Data processed. "#+resp
+      if resp.split()[0]=="error":
+	resp = "error"
     # THIS IS A TEST OF GENERATOR
     #name = {'C': 'SW', 'O': 'iMovie', 'CN':'test'}
     #Gen = ca_processes.Generator(data, name, issuer, serial)
