@@ -1,4 +1,4 @@
-#! /bin/usr/env python
+#!/bin/usr/python
 
 ##########################
 # Simple server that listens for connection, starts thread per client.
