@@ -14,8 +14,11 @@ if (!$isLoggedIn) {
 	} else if ($email == "") {
 		$feedback = "Email Cannot Be Blank";
 	} else {
-		$mysql->query("UPDATE users SET firstname='$fname', lastname='$lname', email='$email' WHERE uid='$uid'");
-		$feedback = "Profile Updated";
+		if ($statement = $mysql->prepare("UPDATE users SET firstname=?, lastname=?, email=? WHERE uid=?")) {
+			$statement->bind_param("ssss", $fname, $lname, $email, $uid);
+			$statement->execute();
+			$feedback = "Profile Updated";
+		}
 	}
 }
 ?>

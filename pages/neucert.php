@@ -10,10 +10,10 @@ if ($confirm == '1') {
 		'username' => $user['uid'],
 		'fullname' => $user['firstname'].' '.$user['lastname'],
 		'email' => $user['email']));
-	print($request);
 	// send request to CA server
-	// wait for response
+	$response = shell_exec("/var/www/html/dummy.sh $request");
 	// Print resulting certificate contents and offer PKCS#12 download
+	print nl2br($response);
 } else {
 	?>
 	Your user details are as follows: <br />

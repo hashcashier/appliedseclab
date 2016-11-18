@@ -4,15 +4,22 @@ if (!$isLoggedIn) {
 	die();
 }
 
-if (isset($_FILES['cert'], $_FILES['pkey'])) {
+function wasSent($file) {
+	return file_exists($file['tmp_name']) && is_uploaded_file($file['tmp_name']);
+}
+
+if (isset($_FILES['cert'], $_FILES['pkey']) && wasSent($_FILES['cert']) && wasSent($_FILES['pkey'])) {
+	$request = json_encode(array('cert' => $_FILES['cert']['tmp_name'], 'pkey' => $_FILES['pkey']['tmp_name']));
 	// send request to CA server
-	// wait for response
+	$response = shell_exec("/var/www/html/dummy.sh $request");
 	// confirm revocation
-} else if (isset($_GET['all'] && $_GET['all'] == '1') {
-	$request = json_encode(array('username' => $uid));
+	print($response);
+} else if (isset($_GET['all']) && $_GET['all'] == '1') {
+	$request = json_encode(array('revoke' => $user['uid']));
 	// send request to CA server
-	// wait for response
+	$response = shell_exec("/var/www/html/dummy.sh $request");
 	// confirm revocation
+	print($response);
 } else {
 	?>
 	<form action="?page=revoke" method="post" enctype="multipart/form-data">
