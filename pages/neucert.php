@@ -7,11 +7,11 @@ $confirm = isset($_GET['confirm']) ? $_GET['confirm'] : 0;
 
 if ($confirm == '1') {
 	$request = json_encode(array(
-		'username' => $user['uid'],
-		'fullname' => $user['firstname'].' '.$user['lastname'],
-		'email' => $user['email']));
+		'uname' => $user['uid'],
+		'CN' => $user['firstname'].' '.$user['lastname'],
+		'emailAddress' => $user['email']));
 	// send request to CA server
-	$response = shell_exec("/var/www/html/dummy.sh $request");
+	$response = shell_exec("/var/www/html/dummy.sh G_$request");
 	// Print resulting certificate contents and offer PKCS#12 download
 	print nl2br($response);
 } else {
