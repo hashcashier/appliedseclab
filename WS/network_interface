@@ -1,0 +1,7 @@
+#to append to /etc/network/interfaces
+
+auto enp0s8
+iface enp0s8 inet static
+address 10.0.0.4
+netmask 255.255.255.0
+gateway 10.0.0.1

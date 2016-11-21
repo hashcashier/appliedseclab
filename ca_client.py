@@ -2,6 +2,7 @@ import socket
 import sys
 from os.path import join
 from os import getcwd
+import ssl
 
 #directory in which to save files
 client_dir = join(getcwd(),"client")
@@ -10,7 +11,7 @@ buf = 1024 #size of buffer
 
 #check number of arguments
 """
-Arguments: 	flag G pr R
+Arguments: 	flag G or R
 		uid = "uname"
 		FirstName +
 		LastName = "CN"
@@ -28,7 +29,7 @@ message = flag+'_'+'{"uname":"'+uname+'","CN":"'+firstname+' '+lastname+'","emai
 filename = "crl.pem" if flag=="R" else uname+".p12"
 
 #Create TCP/IP socket
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s = ssl.wrap_socket(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
 
 #connecting to the cache
 server_address = ('localhost', 8888) #TODO change address and port number

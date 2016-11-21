@@ -8,6 +8,7 @@ import threading
 import json
 from OpenSSL import crypto, SSL
 from modules import gen_ca, ca_processes
+import ssl
 
 buf=1024
 ######################
@@ -147,9 +148,11 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print "[+]Socket created on host %s port %d" %server_address
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) #so no 'address already in use' after crash
 
+sock = ssl.wrap_socket(s, certfile="./certs/ca.crt", keyfile="./certs/ca.key", server_side=True, do_handshake_on_connect=False)
+
 #Bind socket to local host and port
 try:
-  s.bind((HOST, PORT))
+  sock.bind((HOST, PORT))
 except socket.error as msg:
   print "[!!]Bind failed. Error Code: "+str(msg[0])+ " Message "+msg[1]
   sys.exit()
@@ -157,7 +160,7 @@ except socket.error as msg:
 print "[+]Socket bind complete"
 
 #Start listening on socket
-s.listen(10)
+sock.listen(10)
 print "[+]Socket now listening"
 k=0
 threads = [] #to be able to wait for all connections to end
@@ -165,7 +168,7 @@ threads = [] #to be able to wait for all connections to end
 #Connection from client and open a thread
 while k<1: #TODO set to while true after debugging
   #wait to accept a connection - blocking call
-  (clientSocket, (ip, port)) = s.accept()
+  (clientSocket, (ip, port)) = sock.accept()
   #start a thread
   newThread = ClientThread(ip, port, clientSocket)
   newThread.start()

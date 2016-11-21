@@ -7,7 +7,8 @@ from OpenSSL import crypto, SSL
 from certgen import *
 from certrev import *
 from os.path import exists, join
-from os import getcwd
+from os import getcwd, chmod
+
 #the following line is necessary to check existence of files in Revocator.process(), otherwie it looks for certificates within code/modules
 cert_dir = join(getcwd(), "certs")
 
@@ -55,6 +56,7 @@ class Generator:
     #?#p12.set_ca_certificates(issuer_Cert)
     file.write(p12.export())
     file.close()
+    chmod(join(cert_dir, file_name), 0600)
     # TODO add file contents to resp
     self.state=1
     self.resp = file_name
@@ -123,6 +125,7 @@ class Revocator:
     file=open(filename, "wb")
     file.write(new_crl.export(i_cert, i_key, crypto.FILETYPE_PEM))
     file.close()
+    chmod(join(cert_dir, file_name), 0600)
     #TODO errors?
     self.state = 1
     self.resp = filename
