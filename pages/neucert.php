@@ -11,7 +11,7 @@ if ($confirm == '1') {
 		'CN' => $user['firstname'].' '.$user['lastname'],
 		'emailAddress' => $user['email']));
 	// send request to CA server
-	$response = shell_exec("/var/www/html/dummy.sh G_$request");
+	$response = shell_exec("/var/www/html/ca_client.py G $user['uid'] $user['firstname'] $user['lastname'] $user['email'] employee");
 	// Print resulting certificate contents and offer PKCS#12 download
 	print nl2br($response);
 } else {
