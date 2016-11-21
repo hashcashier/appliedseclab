@@ -145,14 +145,14 @@ class ClientThread(threading.Thread):
 #					#
 #########################################
 
-HOST = 'localhost' #Symbolic name meaning all available interfaces
+HOST = '0.0.0.0' #Symbolic name meaning all available interfaces
 PORT = 8888 #Arbitrary non privileged port
 server_address = (HOST, PORT)
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print "[+]Socket created on host %s port %d" %server_address
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) #so no 'address already in use' after crash
 
-sock = ssl.wrap_socket(s, certfile="./certs/ca.crt", keyfile="./certs/ca.key", server_side=True, do_handshake_on_connect=False)
+sock = ssl.wrap_socket(s, certfile="/home/imovies/appliedseclab/certs/ca.crt", keyfile="/home/imovies/appliedseclab/certs/ca.key", server_side=True, do_handshake_on_connect=False)
 
 #Bind socket to local host and port
 try:
