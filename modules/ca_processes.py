@@ -174,3 +174,67 @@ class Revocator:
       hdr = "HTTP /1.1 400 Bad Request\nContent-Type: text/plain\nConnection: Closed\n\n"
       content = self.error_resp
     return content#hdr+content
+
+class RevocatorOne:
+  def __init__(self, cert_str, key_str, crl, issuer, reason="unspecified"):
+    self.crl = crl
+    self.issuer = issuer
+    self.cert_str = cert_str
+    self.key_str = key_str
+    self.reason = reason
+    self.error_resp = "error revocation"
+    self.resp = "The certificate was revoked"
+    self.state = 0
+  
+  def load_cert_key(self):
+    """
+    Returns the certificate in X509 form and pkey if they exist, None if it doesn't. 
+    """
+    cert = crypto.load_certificate(crypto.FILETYPE_PEM, self.cert_str)
+    key = crypto.load_privatekey(crypto.FILETYPE_PEM, self.key_str)
+    if cert==None or key==None:
+      return
+    else:
+      return (cert,key)
+
+  def process(self):
+    #load the certificate to revoke
+    (cert,pkey)=self.load_cert_key()
+    #check that the key matches certificate
+    ctx = SSL.Context(OpenSSL.SSL.TLSv1_METHOD)
+    ctx.use_privatekey(pkey)
+    ctx.use_certificate(cert)
+    try:
+      ctx.check_privatekey()
+      rev = createRev(cert.get_serial_number(), self.reason)
+      new_crl = update_CRL(rev, self.crl)
+      #sign the new crl
+      (i_cert,i_key)=self.issuer
+      #write new crl to a file
+      filename = "crl.pem"
+      file=open(filename, "wb")
+      file.write(new_crl.export(i_cert, i_key, crypto.FILETYPE_PEM))
+      file.close()
+      chmod(join(cert_dir, filename), 0600)
+      #TODO errors?
+      self.state = 1
+      self.resp = filename
+      return self.resp
+    except SSL.Error:
+      print "Key and certificate don't match"
+      self.state = -1
+      return self.error_resp
+
+  def generate_response(self):
+    """
+    Look at the state of self: 0 means unprocessed, 1 means processed correctly, with filename/response content in self.resp, -1 means not processed correctly with error in self.error_resp
+    Returns: HTTP to send file if correct, HTTP error message in plain text if error, nothing if unprocessed
+    """
+    content = ""
+    if self.state == 1 :
+      in_file = open(join(cert_dir,self.resp),"rb")
+      content = in_file.read()
+    if self.state == -1 :
+      content = self.error_resp
+    return content
+

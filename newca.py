@@ -86,9 +86,15 @@ class ClientThread(threading.Thread):
 	#return object
 	return Gen
     elif flag=="R":
-      if not dict_.has_key("uname"):
-	#returning None as error
-	return None
+      if not dict_.has_key("uname"):#not delete all
+	if not dic_.has_key("cert") or not dict_.has_key("pkey"): #delete specific key
+	  #returning None as error
+	  return None
+        else: #This means we want to delete specific key
+          cert_str = dict_["cert"]
+	  pkey_str = dict_["pkey"]
+	  Rev1 = ca_processes.RevocatorOne(cert_str, pkey_str, current_crl, issuer)
+	  return Rev1
       else:
 	#reformat the arguments
 	uname = dict_["uname"]
