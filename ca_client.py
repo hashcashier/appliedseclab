@@ -20,13 +20,14 @@ Arguments: 	flag G or R
  	OR	flag R
 			jsonencoded{cert, pkey} 
 """
+
 if len(sys.argv) < 3:
   print "Incorrect arguments" #"Usage: python client.py <flag> <uid> <FirstName> <LastName> <email> <adminFlag>"
   sys.exit()
-if len(sys.argv)==3: #revoke specific certificate
-  (flag, dict_) = sys.argv[1]
+elif len(sys.argv)<7: #revoke specific certificate
+  (flag, dict_) = (sys.argv[1], sys.argv[2])
   message = flag+'_'+dict_
-else: #generate a cert or revoke all
+elif len(sys.argv): #generate a cert or revoke all
   [flag, uname, firstname, lastname, email, adminFlag] = sys.argv[1:]
   message = flag+'_'+'{"uname":"'+uname+'","CN":"'+firstname+' '+lastname+'","emailAddress":"'+email+'","O":"iMovies","OU":"'+adminFlag+'"}'
 

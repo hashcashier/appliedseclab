@@ -190,6 +190,7 @@ class RevocatorOne:
     """
     Returns the certificate in X509 form and pkey if they exist, None if it doesn't. 
     """
+    print cert_str
     cert = crypto.load_certificate(crypto.FILETYPE_PEM, self.cert_str)
     key = crypto.load_privatekey(crypto.FILETYPE_PEM, self.key_str)
     if cert==None or key==None:

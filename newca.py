@@ -14,7 +14,7 @@ import ssl
 from os import getcwd
 from os.path import join
 
-buf=1024
+buf=4096
 ######################
 # get CA information #
 ######################
@@ -87,7 +87,7 @@ class ClientThread(threading.Thread):
 	return Gen
     elif flag=="R":
       if not dict_.has_key("uname"):#not delete all
-	if not dic_.has_key("cert") or not dict_.has_key("pkey"): #delete specific key
+	if not dict_.has_key("cert") or not dict_.has_key("pkey"): #delete specific key
 	  #returning None as error
 	  return None
         else: #This means we want to delete specific key
