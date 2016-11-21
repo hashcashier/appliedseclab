@@ -18,7 +18,7 @@ buf=1024
 ######################
 # get CA information #
 ######################
-cert_dir = "/home/imovies/appliedseclab/certs/"
+cert_dir = "./certs"#"/home/imovies/appliedseclab/certs/"
 gen_ca.create_ca_cert(cert_dir)
 issuer = (gen_ca.get_ca_cert(cert_dir),gen_ca.get_ca_key(cert_dir))
 serial = 1 #TODO randomize serial number
@@ -145,7 +145,7 @@ class ClientThread(threading.Thread):
 #					#
 #########################################
 
-HOST = 'localhost' #Symbolic name meaning all available interfaces
+HOST = '0.0.0.0' #Symbolic name meaning all available interfaces
 PORT = 8888 #Arbitrary non privileged port
 server_address = (HOST, PORT)
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -170,7 +170,7 @@ k=0
 threads = [] #to be able to wait for all connections to end
 
 #Connection from client and open a thread
-while k<1: #TODO set to while true after debugging
+while True: #TODO set to while true after debugging
   #wait to accept a connection - blocking call
   (clientSocket, (ip, port)) = sock.accept()
   #start a thread

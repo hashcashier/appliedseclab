@@ -43,5 +43,6 @@ def update_CRL(revoked, crl):
   Returns: a crl object
   """
   crl.add_revoked(revoked)
+  print "Added revoked :"+str(revoked)
   #crl.set_lastUpdate(when) ##need to figure out ASN.1 Generalized time
   return crl

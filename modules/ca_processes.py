@@ -7,10 +7,10 @@ from OpenSSL import crypto, SSL
 from certgen import *
 from certrev import *
 from os.path import exists, join
-from os import getcwd, chmod
+from os import getcwd, chmod, listdir
 
 #the following line is necessary to check existence of files in Revocator.process(), otherwie it looks for certificates within code/modules
-cert_dir = "/home/imovies/appliedseclab/certs" #TODO change to final directory
+cert_dir = "./certs" #TODO change to final directory
 
 class Generator:
   '''
@@ -48,7 +48,7 @@ class Generator:
     cert = createCertificate(req, self.issuer, self.serial_num, (0,365000), "sha1")
     # write certificate to a file
     # create PKCS#12 archive containing: pkey, cert... TODO issuerCert?
-    file_name = self.uname+".p12"
+    file_name = str(self.serial_num)+self.uname+".p12"
     file = open(join(cert_dir,file_name), "wb")
     p12 = crypto.PKCS12()
     p12.set_certificate(cert)
@@ -94,6 +94,26 @@ class Revocator:
     self.error_resp = "error revocation"
     self.resp = "The certificate was revoked"
     self.state = 0
+  
+  def load_certs(self):
+    """
+    Returns the certificate in X509 form if it exists, None if it doesn't. 
+    """
+    certs=[]
+    filename = self.uname+".p12"
+    #print "filename is: "+filename
+    #print "path to file is :"+join(cert_dir,filename)
+    #if exists(join(cert_dir,filename)):
+      #print "File exists"
+    for f in listdir("./certs"):
+      if f.endswith(filename):
+        print f
+        certs.append(crypto.load_pkcs12(open(join(cert_dir,f)).read()).get_certificate())
+    if certs==[]:
+      return
+    else:
+      print certs
+      return certs
 
   def load_cert(self):
     """
@@ -102,22 +122,30 @@ class Revocator:
     filename = self.uname+".p12"
     #print "filename is: "+filename
     #print "path to file is :"+join(cert_dir,filename)
-    if exists(join(cert_dir,filename)):
+    #if exists(join(cert_dir,filename)):
       #print "File exists"
-      cert = crypto.load_pkcs12(open(join(cert_dir,filename)).read()).get_certificate()
-      return cert
-    else:
+    for f in listdir("./certs"):
+      if f.endswith(filename):
+        print f
+        cert = crypto.load_pkcs12(open(join(cert_dir,f)).read()).get_certificate()
+    if cert==None:
       return
-
+    else:
+      return cert
+  
   def process(self):
     #load the certificate to revoke
-    cert=self.load_cert()
-    if cert==None:
-      self.state = -1
-      return self.error_resp
-    #create revocation for this certificate, then update the crl
-    rev = createRev(cert.get_serial_number(), self.reason)
-    new_crl = update_CRL(rev, self.crl)
+    certs=self.load_certs()
+    #TODO CHANGES HERE
+    new_crl = self.crl
+    for cert in certs:
+      if cert==None:
+        self.state = -1
+        return self.error_resp
+      #create revocation for this certificate, then update the crl
+      rev = createRev(cert.get_serial_number(), self.reason)
+      new_crl = update_CRL(rev, new_crl)
+    #TODO CHANGES UNTIL HERE
     #sign the new crl
     (i_cert,i_key)=self.issuer
     #write new crl to a file
@@ -125,7 +153,7 @@ class Revocator:
     file=open(filename, "wb")
     file.write(new_crl.export(i_cert, i_key, crypto.FILETYPE_PEM))
     file.close()
-    chmod(join(cert_dir, file_name), 0600)
+    chmod(join(cert_dir, filename), 0600)
     #TODO errors?
     self.state = 1
     self.resp = filename
