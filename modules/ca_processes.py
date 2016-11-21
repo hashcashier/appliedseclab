@@ -10,7 +10,7 @@ from os.path import exists, join
 from os import getcwd, chmod
 
 #the following line is necessary to check existence of files in Revocator.process(), otherwie it looks for certificates within code/modules
-cert_dir = join(getcwd(), "certs")
+cert_dir = "/home/imovies/appliedseclab/certs" #TODO change to final directory
 
 class Generator:
   '''

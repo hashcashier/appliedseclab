@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 ##########################
 # Simple server that listens for connection, starts thread per client.
 ##########################
@@ -9,12 +11,14 @@ import json
 from OpenSSL import crypto, SSL
 from modules import gen_ca, ca_processes
 import ssl
+from os import getcwd
+from os.path import join
 
 buf=1024
 ######################
 # get CA information #
 ######################
-cert_dir = "./certs/"
+cert_dir = "/home/imovies/appliedseclab/certs/"
 gen_ca.create_ca_cert(cert_dir)
 issuer = (gen_ca.get_ca_cert(cert_dir),gen_ca.get_ca_key(cert_dir))
 serial = 1 #TODO randomize serial number
