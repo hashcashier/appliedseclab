@@ -12,18 +12,23 @@ buf = 1024 #size of buffer
 #check number of arguments
 """
 Arguments: 	flag G or R
-		uid = "uname"
-		FirstName +
-		LastName = "CN"
-		email = "emailAddress"
-		adminFlag = "OU" 
+			uid = "uname"
+			FirstName +
+			LastName = "CN"
+			email = "emailAddress"
+			adminFlag = "OU"
+ 	OR	flag R
+			jsonencoded{cert, pkey} 
 """
-if len(sys.argv) < 7:
-  print "Usage: python client.py <flag> <uid> <FirstName> <LastName> <email> <adminFlag>"
+if len(sys.argv) < 3:
+  print "Incorrect arguments" #"Usage: python client.py <flag> <uid> <FirstName> <LastName> <email> <adminFlag>"
   sys.exit()
-
-[flag, uname, firstname, lastname, email, adminFlag] = sys.argv[1:]
-message = flag+'_'+'{"uname":"'+uname+'","CN":"'+firstname+' '+lastname+'","emailAddress":"'+email+'","O":"iMovies","OU":"'+adminFlag+'"}'
+if len(sys.argv)==3: #revoke specific certificate
+  (flag, dict_) = sys.argv[1]
+  message = flag+'_'+dict_
+else: #generate a cert or revoke all
+  [flag, uname, firstname, lastname, email, adminFlag] = sys.argv[1:]
+  message = flag+'_'+'{"uname":"'+uname+'","CN":"'+firstname+' '+lastname+'","emailAddress":"'+email+'","O":"iMovies","OU":"'+adminFlag+'"}'
 
 #file to save response at
 filename = "crl.pem" if flag=="R" else uname+".p12"
