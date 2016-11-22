@@ -12,7 +12,7 @@ if ($confirm == '1') {
 		'CN' => $user['firstname'].' '.$user['lastname'],
 		'emailAddress' => $user['email']));
 	// send request to CA server
-	print("/var/www/html/ca_client.py G {$user['uid']} {$user['firstname']} {$user['lastname']} {$user['email']} employee"."<br>");
+	//print("/var/www/html/ca_client.py G {$user['uid']} {$user['firstname']} {$user['lastname']} {$user['email']} employee"."<br>");
 	$response = shell_exec("/var/www/html/ca_client.py G {$user['uid']} {$user['firstname']} {$user['lastname']} {$user['email']} employee");
 	// Print resulting certificate contents and offer PKCS#12 download
 	header("Location: /?page=neucert&down=1");
