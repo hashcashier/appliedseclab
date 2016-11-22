@@ -42,6 +42,9 @@ def update_CRL(revoked, crl):
 		the crl to add it to
   Returns: a crl object
   """
+  #print crypto.dump_certificate(crypto.FILETYPE_PEM, revoked)
+  #print str(revoked)
+  print crypto.dump_crl(crypto.FILETYPE_PEM, crl)
   crl.add_revoked(revoked)
   print "Added revoked :"+str(revoked)
   #crl.set_lastUpdate(when) ##need to figure out ASN.1 Generalized time
