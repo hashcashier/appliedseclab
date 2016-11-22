@@ -31,7 +31,7 @@ elif len(sys.argv)<7: #revoke specific certificate
 elif len(sys.argv): #generate a cert or revoke all
   [flag, uname, firstname, lastname, email, adminFlag] = sys.argv[1:]
   #message = flag+'_'+'{"uname":"'+uname+'","CN":"'+firstname+' '+lastname+'","emailAddress":"'+email+'","O":"iMovies","OU":"'+adminFlag+'"}'
-  message = flag+'_'+'{"uname":"'+uname+'","CN":"'uname'","emailAddress":"'+email+'","O":"iMovies","OU":"'+adminFlag+'"}'
+  message = flag+'_'+'{"uname":"'+uname+'","CN":"'+uname+'","emailAddress":"'+email+'","O":"iMovies","OU":"'+adminFlag+'"}'
 
 #file to save response at
 filename = "crl.pem" if flag=="R" else uname+".p12"
@@ -40,7 +40,8 @@ filename = "crl.pem" if flag=="R" else uname+".p12"
 s = ssl.wrap_socket(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
 
 #connecting to the cache
-server_address = ('192.168.2.246', 8888) #TODO change address and port number
+#server_address = ('192.168.2.246', 8888) #TODO change address and port number
+server_address = ('localhost', 8888) #TODO change address and port number
 print 'Trying to connect to server at %s on port %d' % server_address
 s.connect(server_address)
 

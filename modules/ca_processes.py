@@ -10,8 +10,10 @@ from os.path import exists, join
 from os import getcwd, chmod, listdir
 
 #the following line is necessary to check existence of files in Revocator.process(), otherwie it looks for certificates within code/modules
-cert_dir = "/home/imovies/appliedseclab/certs" #TODO change to final directory
+#cert_dir = "/home/imovies/appliedseclab/certs" #TODO change to final directory
 
+
+cert_dir = "./certs" #TODO change to final directory
 class Generator:
   '''
         This class is a generator used to process the request. 
@@ -142,6 +144,8 @@ class Revocator:
     certs=self.load_certs()
     #TODO CHANGES HERE
     new_crl = self.crl
+    if certs==None:
+      return (self.error_resp, self.gen_num, self.rev_num)
     for cert in certs:
       if cert==None:
         self.state = -1

@@ -18,7 +18,7 @@ buf=4096
 ######################
 # get CA information #
 ######################
-cert_dir = "/home/imovies/appliedseclab/certs/" #"./certs" for tests
+cert_dir = "./certs" #"/home/imovies/appliedseclab/certs/" #"./certs" for tests
 gen_ca.create_ca_cert(cert_dir)
 issuer = (gen_ca.get_ca_cert(cert_dir),gen_ca.get_ca_key(cert_dir))
 gen_ca.create_crl(cert_dir, issuer)
@@ -27,7 +27,7 @@ current_crl=gen_ca.get_crl(cert_dir)
 #####################
 # get CA statistics #
 #####################
-stat_file = "/home/imovies/appliedseclab/stats" #./stats" for tests
+stat_file ="./stats" # "/home/imovies/appliedseclab/stats" #./stats" for tests
 fd = open(stat_file,"r")
 stat_list = fd.read().split(" ")
 generated = int(stat_list[0])
@@ -180,7 +180,8 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print "[+]Socket created on host %s port %d" %server_address
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) #so no 'address already in use' after crash
 
-sock = ssl.wrap_socket(s, certfile="/home/imovies/appliedseclab/certs/ca.crt", keyfile="/home/imovies/appliedseclab/certs/ca.key", server_side=True, do_handshake_on_connect=False)
+#sock = ssl.wrap_socket(s, certfile="/home/imovies/appliedseclab/certs/ca.crt", keyfile="/home/imovies/appliedseclab/certs/ca.key", server_side=True, do_handshake_on_connect=False)
+sock = ssl.wrap_socket(s, certfile="./certs/ca.crt", keyfile="./certs/ca.key", server_side=True, do_handshake_on_connect=False)
 
 #Bind socket to local host and port
 try:
