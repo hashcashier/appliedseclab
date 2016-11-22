@@ -22,12 +22,13 @@ class Generator:
           serial_num : the certificate serial number
   '''
  
-  def __init__(self, uname, name, issuer, serial_num):
+  def __init__(self, uname, name, issuer, serial_num, gen_num, rev_num):
     self.uname = uname
     self.name = name
     self.issuer = issuer
     self.serial_num = serial_num
-   
+    self.gen_num = gen_num #current number of generated certificates
+    self.rev_num = rev_num
     # response strings, must be the HTTP response that will eventually be sent
     self.error_resp = "error generation"
     self.resp = "Something has been generated"
@@ -59,8 +60,9 @@ class Generator:
     chmod(join(cert_dir, file_name), 0600)
     # TODO add file contents to resp
     self.state=1
+    self.gen_num+=1
     self.resp = file_name
-    return self.resp
+    return (self.resp, self.gen_num, self.rev_num)
 
   def generate_response(self):
     """
@@ -86,11 +88,13 @@ class Revocator:
 		issuer
 		reason, unspecified by default
   """
-  def __init__(self, uname, crl, issuer, reason="unspecified"):
+  def __init__(self, uname, crl, issuer, gen_num, rev_num, reason="unspecified"):
     self.uname = uname
     self.crl = crl
     self.issuer = issuer
     self.reason = reason
+    self.rev_num = rev_num #current number of revoked certificates
+    self.gen_num = gen_num
     self.error_resp = "error revocation"
     self.resp = "The certificate was revoked"
     self.state = 0
@@ -145,6 +149,7 @@ class Revocator:
       #create revocation for this certificate, then update the crl
       rev = createRev(cert.get_serial_number(), self.reason)
       new_crl = update_CRL(rev, new_crl)
+      self.rev_num+=1
     #TODO CHANGES UNTIL HERE
     #sign the new crl
     (i_cert,i_key)=self.issuer
@@ -157,7 +162,7 @@ class Revocator:
     #TODO errors?
     self.state = 1
     self.resp = filename
-    return self.resp 
+    return (self.resp, self.gen_num ,self.rev_num) 
 
   def generate_response(self):
     """
@@ -176,7 +181,7 @@ class Revocator:
     return content#hdr+content
 
 class RevocatorOne:
-  def __init__(self, cert_str, key_str, crl, issuer, reason="unspecified"):
+  def __init__(self, cert_str, key_str, crl, issuer, gen_num, rev_num, reason="unspecified"):
     self.crl = crl
     self.issuer = issuer
     self.cert_str = cert_str
@@ -219,12 +224,13 @@ class RevocatorOne:
       chmod(join(cert_dir, filename), 0600)
       #TODO errors?
       self.state = 1
+      self.rev_num+=1
       self.resp = filename
-      return self.resp
+      return (self.resp, self.gen_num, self.rev_num)
     except SSL.Error:
       print "Key and certificate don't match"
       self.state = -1
-      return self.error_resp
+      return (self.error_resp, 0)
 
   def generate_response(self):
     """
