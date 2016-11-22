@@ -18,10 +18,10 @@ buf=4096
 ######################
 # get CA information #
 ######################
-cert_dir = "./certs"#"/home/imovies/appliedseclab/certs/"
+cert_dir = "/home/imovies/appliedseclab/certs/" #"./certs" for tests
 gen_ca.create_ca_cert(cert_dir)
 issuer = (gen_ca.get_ca_cert(cert_dir),gen_ca.get_ca_key(cert_dir))
-serial = 1 #TODO randomize serial number
+serial = 1 #TODO get serial number from file
 gen_ca.create_crl(cert_dir, issuer)
 current_crl=gen_ca.get_crl(cert_dir)
 
@@ -107,7 +107,6 @@ class ClientThread(threading.Thread):
   def run(self):    
     print "Connection from : "+ip+":"+str(port)
       
-    #TODO
     # receive and parse data
     data = self.socket.recv(buf)
     print "Received: "+data
