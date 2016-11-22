@@ -33,8 +33,8 @@ def create_ca_cert(cert_dir):
     cert.sign(k, 'sha1')
      
 
-    open(join(cert_dir, CERT_FILE), "wt").write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert))
-    open(join(cert_dir, KEY_FILE), "wt").write(crypto.dump_privatekey(crypto.FILETYPE_PEM, k))
+    open(join(cert_dir, CERT_FILE), "wb").write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert))
+    open(join(cert_dir, KEY_FILE), "wb").write(crypto.dump_privatekey(crypto.FILETYPE_PEM, k))
     
 def create_crl(cert_dir, (issuer_cert, issuer_key)):
   """
@@ -49,7 +49,7 @@ def create_crl(cert_dir, (issuer_cert, issuer_key)):
 def get_ca_key(cert_dir):
   if exists(join(cert_dir, KEY_FILE)):
     # open file and read into buffer
-    buf = open(join(cert_dir, KEY_FILE)).read()
+    buf = open(join(cert_dir, KEY_FILE), "rb").read()
     # load a key from buffer
     ca_key = crypto.load_privatekey(crypto.FILETYPE_PEM, buf)
     return ca_key
@@ -59,7 +59,7 @@ def get_ca_key(cert_dir):
 def get_ca_cert(cert_dir):
   if exists(join(cert_dir, CERT_FILE)):
     #open file and read into buffer
-    buf = open(join(cert_dir, CERT_FILE)).read()
+    buf = open(join(cert_dir, CERT_FILE), "rb").read()
     #Load certificate from buffer
     ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, buf)
     return ca_cert
@@ -70,7 +70,7 @@ def get_ca_cert(cert_dir):
 def get_crl(cert_dir):
   if exists(join(cert_dir, CRL_FILE)):
     #open file and read into buffer
-    buf = open(join(cert_dir, CRL_FILE)).read()
+    buf = open(join(cert_dir, CRL_FILE), "rb").read()
     # load crl from buffer
     crl = crypto.load_crl(crypto.FILETYPE_PEM, buf)
     return crl
