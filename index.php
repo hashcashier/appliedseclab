@@ -43,7 +43,7 @@ if (!$isLoggedIn && hasValidCert()) {
 
 	print("Authenticated via Certificate.<br/>");
 	print("If you are not redirected then refresh the page.<br/>");
-	print("If you continue to see this after refresh, then your certificate is not valid. Have you changed your email? ($email)</br>");
+	print("$uid, If you continue to see this after refresh, then your certificate is not valid. Have you changed your email? ($email)</br>");
 	
 	$result = $mysql->query("SELECT * FROM users WHERE uid='$uid' AND email='$email'");
 	if ($result && $result->num_rows == 1) {
