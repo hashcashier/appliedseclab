@@ -19,7 +19,7 @@ if ($confirm == '1') {
 	die();
 } else if($download == '1') {
 	?>
-	Downloading..
+	Error..
 	<?php
 	
 	// TODO: Delete file at some point in time..
