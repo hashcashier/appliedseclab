@@ -21,9 +21,18 @@ buf=4096
 cert_dir = "/home/imovies/appliedseclab/certs/" #"./certs" for tests
 gen_ca.create_ca_cert(cert_dir)
 issuer = (gen_ca.get_ca_cert(cert_dir),gen_ca.get_ca_key(cert_dir))
-serial = 1 #TODO get serial number from file
 gen_ca.create_crl(cert_dir, issuer)
 current_crl=gen_ca.get_crl(cert_dir)
+
+#####################
+# get CA statistics #
+#####################
+stat_file = "/home/imovies/appliedseclab/stats" #./stats" for tests
+fd = open(stat_file,"r")
+stat_list = fd.read().split(" ")
+generated = int(stat_list[0])
+revoked = int(stat_list[1])
+serial = int(stat_list[2])
 
 class ClientThread(threading.Thread):
 
@@ -43,7 +52,7 @@ class ClientThread(threading.Thread):
     		self refers to the current thread	
     Returns: 	a Generator or Revocator correctly initialized, or None if parse Error
     """
-    global serial
+    global serial, generated, revoked
     #TODO Parse and remove the HTTP header
     #separate the flag from the json string
     parts = data.split("_",1)
@@ -80,7 +89,7 @@ class ClientThread(threading.Thread):
 	uname = dict_["uname"]
 	del dict_["uname"]
 	#create the Generator object
-	Gen = ca_processes.Generator(uname, dict_, issuer, serial)
+	Gen = ca_processes.Generator(uname, dict_, issuer, serial, generated, revoked)
 	#update the serial number
 	serial +=1
 	#return object
@@ -93,14 +102,14 @@ class ClientThread(threading.Thread):
         else: #This means we want to delete specific key
           cert_str = dict_["cert"]
 	  pkey_str = dict_["pkey"]
-	  Rev1 = ca_processes.RevocatorOne(cert_str, pkey_str, current_crl, issuer)
+	  Rev1 = ca_processes.RevocatorOne(cert_str, pkey_str, current_crl, issuer, generated, revoked)
 	  return Rev1
       else:
 	#reformat the arguments
 	uname = dict_["uname"]
 	reason = "unspecified" if not dict_.has_key("reason") else dict_["reason"]
 	#create the Revocator object
-	Rev = ca_processes.Revocator(uname, current_crl, issuer)
+	Rev = ca_processes.Revocator(uname, current_crl, issuer, generated, revoked)
 	#return object
 	return Rev	  
   
@@ -110,13 +119,22 @@ class ClientThread(threading.Thread):
     # receive and parse data
     data = self.socket.recv(buf)
     print "Received: "+data
+    if data=="A":
+      print "Reading stats."
+      fd = open(stat_file, "r")
+      resp = fd.read()
+      self.socket.sendall(resp)
+      print "Disconnecting from client"
+      self.socket.close()
+      print "[-] Closing thread on "+ip+":"+str(port)
+      return
     Object = self.parse(data)
     if Object==None:
       #resp = "HTTP /1.1  400 Bad Request\nContent-type: text/plain\n Connection: Closed\n\nParsing error"
       resp = "error"
       print resp
     else:
-      f_name = Object.process()
+      (f_name, generated, revoked) = Object.process()
       print "file processed: "+f_name
       resp = Object.generate_response()
       print "Data processed. "#+resp
@@ -139,6 +157,11 @@ class ClientThread(threading.Thread):
     ## end connection
     print "Disconnecting from client"
     self.socket.close()
+    #update statistics
+    fd = open(stat_file, "w")
+    new_stats = str(generated)+" "+str(revoked)+" "+str(serial)
+    fd.write(new_stats)
+    fd.close()
     print "[-] Thread closed on "+ip+":"+str(port)
 
 
