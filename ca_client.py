@@ -30,7 +30,8 @@ elif len(sys.argv)<7: #revoke specific certificate
   message = flag+'_'+dict_
 elif len(sys.argv): #generate a cert or revoke all
   [flag, uname, firstname, lastname, email, adminFlag] = sys.argv[1:]
-  message = flag+'_'+'{"uname":"'+uname+'","CN":"'+firstname+' '+lastname+'","emailAddress":"'+email+'","O":"iMovies","OU":"'+adminFlag+'"}'
+  #message = flag+'_'+'{"uname":"'+uname+'","CN":"'+firstname+' '+lastname+'","emailAddress":"'+email+'","O":"iMovies","OU":"'+adminFlag+'"}'
+  message = flag+'_'+'{"uname":"'+uname+'","CN":"'uname'","emailAddress":"'+email+'","O":"iMovies","OU":"'+adminFlag+'"}'
 
 #file to save response at
 filename = "crl.pem" if flag=="R" else uname+".p12"
