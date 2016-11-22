@@ -25,6 +25,7 @@ if ($confirm == '1') {
 	// TODO: Delete file at some point in time..
 	$file = "/var/www/html/client/$uid.p12";
 	if (file_exists($file)) {
+		ob_clean();
 		header('Content-Description: File Transfer');
 		header('Content-Type: application/octet-stream');
 		header('Content-Disposition: attachment; filename="'.basename($file).'"');
