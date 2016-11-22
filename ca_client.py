@@ -60,6 +60,7 @@ if data=="error":
 
 print "\n Saving to file ./client/"+filename 
 fd = open(join(client_dir,filename), "wb")
+
 fd.write(data)
 fd.close()
 print 'Saved. To bed now'

@@ -17,7 +17,7 @@ if (isset($_FILES['cert'], $_FILES['pkey']) && wasSent($_FILES['cert']) && wasSe
 } else if (isset($_GET['all']) && $_GET['all'] == '1') {
 	$request = json_encode(array('revoke' => $user['uid']));
 	// send request to CA server
-	$response = shell_exec("/var/www/html/ca_client.py G $user['uid'] $user['firstname'] $user['lastname'] $user['email'] employee");
+	$response = shell_exec("/var/www/html/ca_client.py R {$user['uid']} {$user['firstname']} {$user['lastname']} {$user['email']} employee");
 	// confirm revocation
 	print($response);
 } else {
