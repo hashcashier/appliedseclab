@@ -109,7 +109,7 @@ class Revocator:
     #print "path to file is :"+join(cert_dir,filename)
     #if exists(join(cert_dir,filename)):
       #print "File exists"
-    for f in listdir("./certs"):
+    for f in listdir("/home/imovies/appliedseclab/certs"):
       if f.endswith(filename):
         print f
         certs.append(crypto.load_pkcs12(open(join(cert_dir,f)).read()).get_certificate())
@@ -128,7 +128,7 @@ class Revocator:
     #print "path to file is :"+join(cert_dir,filename)
     #if exists(join(cert_dir,filename)):
       #print "File exists"
-    for f in listdir("./certs"):
+    for f in listdir("/home/imovies/appliedseclab/certs"):
       if f.endswith(filename):
         print f
         cert = crypto.load_pkcs12(open(join(cert_dir,f)).read()).get_certificate()
