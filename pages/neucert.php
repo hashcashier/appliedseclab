@@ -4,6 +4,7 @@ if (!$isLoggedIn) {
 	die();
 }
 $confirm = isset($_GET['confirm']) ? $_GET['confirm'] : 0;
+$download = isset($_GET['down']) ? $_GET['down'] : 0;
 
 if ($confirm == '1') {
 	$request = json_encode(array(
@@ -11,9 +12,31 @@ if ($confirm == '1') {
 		'CN' => $user['firstname'].' '.$user['lastname'],
 		'emailAddress' => $user['email']));
 	// send request to CA server
-	$response = shell_exec("/var/www/html/ca_client.py G $user['uid'] $user['firstname'] $user['lastname'] $user['email'] employee");
+	print("/var/www/html/ca_client.py G {$user['uid']} {$user['firstname']} {$user['lastname']} {$user['email']} employee"."<br>");
+	$response = shell_exec("/var/www/html/ca_client.py G {$user['uid']} {$user['firstname']} {$user['lastname']} {$user['email']} employee");
 	// Print resulting certificate contents and offer PKCS#12 download
-	print nl2br($response);
+	header("Location: /?page=neucert&down=1");
+	die();
+} else if($download == '1') {
+	?>
+	Downloading..
+	<?php
+	
+	// TODO: Delete file at some point in time..
+	$file = "/var/www/html/client/$uid.p12";
+	if (file_exists($file)) {
+		header('Content-Description: File Transfer');
+		header('Content-Type: application/octet-stream');
+		header('Content-Disposition: attachment; filename="'.basename($file).'"');
+		header('Expires: 0');
+		header('Cache-Control: must-revalidate');
+		header('Pragma: public');
+		header('Content-Length: ' . filesize($file));
+		readfile($file);
+	}
+	
+	die();
+	
 } else {
 	?>
 	Your user details are as follows: <br />

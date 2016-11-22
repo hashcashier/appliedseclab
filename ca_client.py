@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import socket
 import sys
 from os.path import join
@@ -32,7 +33,7 @@ filename = "crl.pem" if flag=="R" else uname+".p12"
 s = ssl.wrap_socket(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
 
 #connecting to the cache
-server_address = ('localhost', 8888) #TODO change address and port number
+server_address = ('192.168.2.246', 8888) #TODO change address and port number
 print 'Trying to connect to server at %s on port %d' % server_address
 s.connect(server_address)
 
@@ -53,6 +54,7 @@ if data=="error":
 
 print "\n Saving to file ./client/"+filename 
 fd = open(join(client_dir,filename), "wb")
+
 fd.write(data)
 fd.close()
 print 'Saved. To bed now'
