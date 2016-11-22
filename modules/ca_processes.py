@@ -112,7 +112,7 @@ class Revocator:
     for f in listdir("/home/imovies/appliedseclab/certs"):
       if f.endswith(filename):
         print f
-        certs.append(crypto.load_pkcs12(open(join(cert_dir,f)).read()).get_certificate())
+        certs.append(crypto.load_pkcs12(open(join(cert_dir,f), "rb").read()).get_certificate())
     if certs==[]:
       return
     else:
@@ -131,7 +131,7 @@ class Revocator:
     for f in listdir("/home/imovies/appliedseclab/certs"):
       if f.endswith(filename):
         print f
-        cert = crypto.load_pkcs12(open(join(cert_dir,f)).read()).get_certificate()
+        cert = crypto.load_pkcs12(open(join(cert_dir,f), "rb").read()).get_certificate()
     if cert==None:
       return
     else:
@@ -148,6 +148,8 @@ class Revocator:
         return self.error_resp
       #create revocation for this certificate, then update the crl
       rev = createRev(cert.get_serial_number(), self.reason)
+      print rev
+      print new_crl
       new_crl = update_CRL(rev, new_crl)
       self.rev_num+=1
     #TODO CHANGES UNTIL HERE
