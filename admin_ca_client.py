@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import socket
 import sys
 from os.path import join
@@ -11,7 +12,7 @@ buf = 1024 #size of buffer
 s = ssl.wrap_socket(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
 
 #connecting to the cache
-server_address = ('192.168.2.173', 8888) #TODO change address and port number
+server_address = ('192.168.2.246', 8888) #TODO change address and port number
 #print 'Trying to connect to server at %s on port %d' % server_address
 s.connect(server_address)
 
@@ -34,7 +35,8 @@ if data=="error":
 [generated, revoked, serial]=data.split(" ")
 
 print generated+"\n"+revoked+"\n"+serial
-fd = open(join(client_dir,filename), "wb")
-fd.write(data)
-fd.close()
+
+#fd = open(join(client_dir,filename), "wb")
+#fd.write(data)
+#fd.close()
 #print 'Saved. To bed now'
