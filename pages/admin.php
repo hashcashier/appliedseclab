@@ -4,7 +4,7 @@ if (!$isLoggedIn || !$isCertAuth || !$isAdmin) {
 	die();
 }
 
-$request = json_encode(array('stats' => 1));
+?>#Issued, #Revoked, Current Serial:<br/><?php
 $response = shell_exec("/var/www/html/admin_ca_client.py");
 print($response);
 
