@@ -13,7 +13,7 @@ if ($confirm == '1') {
 		'emailAddress' => $user['email']));
 	// send request to CA server
 	//print("/var/www/html/ca_client.py G {$user['uid']} {$user['firstname']} {$user['lastname']} {$user['email']} employee"."<br>");
-	$response = shell_exec("/var/www/html/ca_client.py G {$user['uid']} {$user['email']} employee");
+	$response = shell_exec("/var/www/html/bash/ca_client.py G {$user['uid']} {$user['email']} employee");
 	// Print resulting certificate contents and offer PKCS#12 download
 	header("Location: /?page=neucert&down=1");
 	die();
@@ -23,7 +23,7 @@ if ($confirm == '1') {
 	<?php
 	
 	// TODO: Delete file at some point in time..
-	$file = "/var/www/html/client/{$uid}cert.p12";
+	$file = "/var/www/html/bash/client/{$uid}cert.p12";
 	if (file_exists($file)) {
 		ob_clean();
 		header('Content-Description: File Transfer');

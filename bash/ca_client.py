@@ -74,8 +74,8 @@ filename = uname+"cert.pem" if flag=="G" else "crl.pem"
 s = ssl.wrap_socket(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
 
 #connecting to the CA
-#server_address = ('192.168.2.246', 8888)
-server_address = ('localhost', 8888) #TODO change address and port number
+server_address = ('192.168.2.246', 8888)
+#server_address = ('localhost', 8888) #TODO change address and port number
 #print 'Trying to connect to server at %s on port %d' % server_address
 s.connect(server_address)
 
