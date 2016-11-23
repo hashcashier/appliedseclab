@@ -5,7 +5,7 @@ if (!$isLoggedIn || !$isCertAuth || !$isAdmin) {
 }
 
 $request = json_encode(array('stats' => 1));
-$response = shell_exec("/var/www/html/dummy.sh $request");
+$response = shell_exec("/var/www/html/admin_ca_client.py");
 print($response);
 
 // Poll CA Server
