@@ -68,7 +68,7 @@ else:
   print "Wrong arguments, closing"
   sys.exit()
 #file to save response at
-filename = uname+"cert.pem" if flag=="G" else "crl.pem"
+filename = uname+"cert.p12" if flag=="G" else "crl.pem"
 
 #Create TCP/IP socket
 s = ssl.wrap_socket(socket.socket(socket.AF_INET, socket.SOCK_STREAM))

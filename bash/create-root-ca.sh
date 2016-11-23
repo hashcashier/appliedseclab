@@ -3,7 +3,7 @@
 HOMEDIR="/home/imovies/appliedseclab/bash/"
 # make directories to work from
 mkdir -p ${HOMEDIR}certs/ca ${HOMEDIR}certs/crl
-mkdir demoCA
+mkdir ${HOMEDIR}demoCA
 
 echo "01" > ${HOMEDIR}certs/ca/my-root-ca.srl
 echo "01" > ${HOMEDIR}demoCA/crlnumber

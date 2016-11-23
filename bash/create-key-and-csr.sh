@@ -4,7 +4,7 @@
 FQDN="$1"
 EMAIL="$2"
 ADMIN="$3"
-SERIAL=$(cat demoCA/serial)
+SERIAL=$(cat ${HOMEDIR}demoCA/serial)
 HOMEDIR="/home/imovies/appliedseclab/bash/"
 # make directories to work from
 mkdir -p ${HOMEDIR}certs/{users,tmp}
