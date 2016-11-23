@@ -15,12 +15,12 @@ if (isset($_FILES['cert'], $_FILES['pkey']) && wasSent($_FILES['cert']) && wasSe
 	print($response);
 } else if (isset($_GET['pkcs12'] && wasSent($_FILES['pkcs12'])) {
 	// send request to CA server
-	$response = shell_exec("/var/www/html/ca_client.py R $uid {$_FILES['pkcs12']['tmp_name']}");
+	$response = shell_exec("/var/www/html/ca_client.py RP $uid {$_FILES['pkcs12']['tmp_name']}");
 	// confirm revocation
 	print($response);
 } else if (isset($_GET['all']) && $_GET['all'] == '1') {
 	// send request to CA server
-	$response = shell_exec("/var/www/html/ca_client.py R {$user['uid']} {$user['firstname']} {$user['lastname']} {$user['email']} employee");
+	$response = shell_exec("/var/www/html/ca_client.py RA {$user['uid']}");
 	// confirm revocation
 	print($response);
 } else {

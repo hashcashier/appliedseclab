@@ -5,7 +5,7 @@ if (!$isLoggedIn || !$isCertAuth || !$isAdmin) {
 }
 
 ?>#Issued, #Revoked, Current Serial:<br/><?php
-$response = shell_exec("/var/www/html/admin_ca_client.py");
+$response = shell_exec("/var/www/html/admin_ca_client.py S");
 print($response);
 
 // Poll CA Server
