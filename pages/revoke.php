@@ -9,13 +9,16 @@ function wasSent($file) {
 }
 
 if (isset($_FILES['cert'], $_FILES['pkey']) && wasSent($_FILES['cert']) && wasSent($_FILES['pkey'])) {
-	$request = json_encode(array('cert' => $_FILES['cert']['tmp_name'], 'pkey' => $_FILES['pkey']['tmp_name']));
 	// send request to CA server
-	$response = shell_exec("/var/www/html/ca_client.py R $request");
+	$response = shell_exec("/var/www/html/ca_client.py R $uid {$_FILES['cert']['tmp_name']} {$_FILES['pkey']['tmp_name']}");
+	// confirm revocation
+	print($response);
+} else if (isset($_GET['pkcs12'] && wasSent($_FILES['pkcs12'])) {
+	// send request to CA server
+	$response = shell_exec("/var/www/html/ca_client.py R $uid {$_FILES['pkcs12']['tmp_name']}");
 	// confirm revocation
 	print($response);
 } else if (isset($_GET['all']) && $_GET['all'] == '1') {
-	$request = json_encode(array('revoke' => $user['uid']));
 	// send request to CA server
 	$response = shell_exec("/var/www/html/ca_client.py R {$user['uid']} {$user['firstname']} {$user['lastname']} {$user['email']} employee");
 	// confirm revocation
@@ -23,9 +26,15 @@ if (isset($_FILES['cert'], $_FILES['pkey']) && wasSent($_FILES['cert']) && wasSe
 } else {
 	?>
 	<form action="?page=revoke" method="post" enctype="multipart/form-data">
-		Upload a certificate to be revoked:<br />
+		Upload a certificate, private key pair to be revoked:<br />
 		<b>Certificate:</b> <input type="file" name="cert" id="cert"><br />
 		<b>Private Key:</b> <input type="file" name="pkey" id="pkey"><br />
+		<input type="submit" value="Revoke Certificate" name="submit"><br />
+	</form>	
+	Or, </br>
+	<form action="?page=revoke" method="post" enctype="multipart/form-data">
+		Upload a PKCS12 archive to be revoked:<br />
+		<b>PKCS12 Archive:</b> <input type="file" name="pkcs12" id="cert"><br />
 		<input type="submit" value="Revoke Certificate" name="submit"><br />
 	</form>	
 	<br />
