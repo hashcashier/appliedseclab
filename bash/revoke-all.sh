@@ -13,7 +13,7 @@ HOMEDIR="/home/imovies/appliedseclab/bash/"
 #name of the user
 FQDN=$1
 
-for filename in certs/users/${FQDN}/*.crt.pem; do
+for filename in ${HOMEDIR}certs/users/${FQDN}/*.crt.pem; do
   echo $filename
   #revoke given certificate
   EXITCODE=$(openssl ca -cert ${HOMEDIR}certs/ca/my-root-ca.crt.pem -keyfile ${HOMEDIR}certs/ca/my-root-ca.key.pem -revoke "$filename")
