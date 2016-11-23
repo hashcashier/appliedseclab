@@ -12,17 +12,17 @@ if (isset($_FILES['cert'], $_FILES['pkey']) && wasSent($_FILES['cert']) && wasSe
 	// send request to CA server
 	$response = shell_exec("/var/www/html/bash/ca_client.py R $uid {$_FILES['cert']['tmp_name']} {$_FILES['pkey']['tmp_name']}");
 	// confirm revocation
-	print($response);
+	print("Success");
 } else if (isset($_FILES['pkcs12']) && wasSent($_FILES['pkcs12'])) {
 	// send request to CA server
 	$response = shell_exec("/var/www/html/bash/ca_client.py RP $uid {$_FILES['pkcs12']['tmp_name']}");
 	// confirm revocation
-	print($response);
+	print("Success");
 } else if (isset($_GET['all']) && $_GET['all'] == '1') {
 	// send request to CA server
 	$response = shell_exec("/var/www/html/bash/ca_client.py RA {$user['uid']}");
 	// confirm revocation
-	print($response);
+	print("Success");
 } else {
 	?>
 	<form action="?page=revoke" method="post" enctype="multipart/form-data">
