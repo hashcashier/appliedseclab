@@ -6,8 +6,10 @@ from os import getcwd
 import ssl
 import base64
 
+home_dir = "/var/www/html/bash"
+
 #directory in which to save files
-client_dir = join(getcwd(),"client")
+client_dir = join(home_dir,"client")
 buf = 1024 #size of buffer
 uname =""
 
