@@ -8,6 +8,7 @@
 
 #This crl : certs/crl/my-root-crl.pem must be scp to WS
 
+HOMEDIR="/home/imovies/appliedseclab/bash/"
 
 #name of the user
 FQDN=$1
@@ -15,16 +16,14 @@ FQDN=$1
 for filename in certs/users/${FQDN}/*.crt.pem; do
   echo $filename
   #revoke given certificate
-  EXITCODE=$(openssl ca -cert certs/ca/my-root-ca.crt.pem -keyfile certs/ca/my-root-ca.key.pem -revoke "$filename")
-  MODIFIED=$(gawk -i inplace '{$1=$1+1}1' demoCA/revoked)
+  EXITCODE=$(openssl ca -cert ${HOMEDIR}certs/ca/my-root-ca.crt.pem -keyfile ${HOMEDIR}certs/ca/my-root-ca.key.pem -revoke "$filename")
+  MODIFIED=$(gawk -i inplace '{$1=$1+1}1' ${HOMEDIR}demoCA/revoked)
   #remove cert to avoid revoking multiple times
 done
 
 # generate new crl
 openssl ca \
   -gencrl \
-  -keyfile certs/ca/my-root-ca.key.pem \
-  -cert certs/ca/my-root-ca.crt.pem \
-  -out certs/crl/my-root-crl.pem
-
-#modify revoked file
+  -keyfile ${HOMEDIR}certs/ca/my-root-ca.key.pem \
+  -cert ${HOMEDIR}certs/ca/my-root-ca.crt.pem \
+  -out ${HOMEDIR}certs/crl/my-root-crl.pem

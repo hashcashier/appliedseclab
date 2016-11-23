@@ -7,13 +7,13 @@
 
 #The file certs/user/uid/uid.serial_num.pfx is to be scp to the WS 
 
-
+HOMEDIR="/home/imovies/appliedseclab/bash/"
 FQDN=$1
 SERIAL=$2
 
 openssl pkcs12 \
   -export \
-  -inkey "certs/users/${FQDN}/${SERIAL}.key.pem" \
-  -in "certs/users/${FQDN}/${SERIAL}.crt.pem" \
-  -out "certs/users/${FQDN}/${FQDN}.${SERIAL}.pfx" \
+  -inkey "${HOMEDIR}certs/users/${FQDN}/${SERIAL}.key.pem" \
+  -in "${HOMEDIR}certs/users/${FQDN}/${SERIAL}.crt.pem" \
+  -out "${HOMEDIR}certs/users/${FQDN}/${FQDN}.${SERIAL}.pfx" \
   -passout pass:

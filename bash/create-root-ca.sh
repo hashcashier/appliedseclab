@@ -1,20 +1,21 @@
 #!/bin/bash
 
+HOMEDIR="/home/imovies/appliedseclab/bash/"
 # make directories to work from
-mkdir -p certs/ca certs/crl
+mkdir -p ${HOMEDIR}certs/ca ${HOMEDIR}certs/crl
 mkdir demoCA
 
-echo "01" > certs/ca/my-root-ca.srl
-echo "01" > demoCA/crlnumber
-echo "00" > demoCA/serial
-echo "0" > demoCA/generated
-echo "0"> demoCA/revoked
-touch demoCA/index.txt
-touch demoCA/stats
+echo "01" > ${HOMEDIR}certs/ca/my-root-ca.srl
+echo "01" > ${HOMEDIR}demoCA/crlnumber
+echo "00" > ${HOMEDIR}demoCA/serial
+echo "0" > ${HOMEDIR}demoCA/generated
+echo "0"> ${HOMEDIR}demoCA/revoked
+touch ${HOMEDIR}demoCA/index.txt
+touch ${HOMEDIR}demoCA/stats
 
 # Create your very own Root Certificate Authority
 openssl genrsa \
-  -out certs/ca/my-root-ca.key.pem \
+  -out ${HOMEDIR}certs/ca/my-root-ca.key.pem \
   2048
 
 # Self-sign your Root Certificate Authority
@@ -23,8 +24,8 @@ openssl req \
   -x509 \
   -new \
   -nodes \
-  -key certs/ca/my-root-ca.key.pem \
+  -key ${HOMEDIR}certs/ca/my-root-ca.key.pem \
   -days 9131 \
-  -out certs/ca/my-root-ca.crt.pem \
+  -out ${HOMEDIR}certs/ca/my-root-ca.crt.pem \
   -subj "/C=CH/ST=Zurich/L=Zurich/O=iMovies/CN=iMovies CA"
 

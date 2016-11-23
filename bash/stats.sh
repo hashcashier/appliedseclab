@@ -1,6 +1,8 @@
 #!/bin/bash
 
-echo $(cat demoCA/generated) > demoCA/stats
-echo $(cat demoCA/revoked) >> demoCA/stats 
-echo $(cat demoCA/serial) >> demoCA/stats 
+HOMEDIR="/home/imovies/appliedseclab/bash/"
+
+echo $(cat ${HOMEDIR}demoCA/generated) > ${HOMEDIR}demoCA/stats
+echo $(cat ${HOMEDIR}demoCA/revoked) >> ${HOMEDIR}demoCA/stats 
+echo $(cat ${HOMEDIR}demoCA/serial) >> ${HOMEDIR}demoCA/stats 
 
