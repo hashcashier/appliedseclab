@@ -4,6 +4,7 @@
 mkdir -p certs/ca certs/crl
 mkdir demoCA
 
+echo "01" > certs/ca/my-root-ca.srl
 echo "01" > demoCA/crlnumber
 echo "01" > demoCA/serial
 touch demoCA/index.txt
