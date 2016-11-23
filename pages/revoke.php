@@ -13,7 +13,7 @@ if (isset($_FILES['cert'], $_FILES['pkey']) && wasSent($_FILES['cert']) && wasSe
 	$response = shell_exec("/var/www/html/bash/ca_client.py R $uid {$_FILES['cert']['tmp_name']} {$_FILES['pkey']['tmp_name']}");
 	// confirm revocation
 	print($response);
-} else if (isset($_GET['pkcs12']) && wasSent($_FILES['pkcs12'])) {
+} else if (isset($_FILES['pkcs12']) && wasSent($_FILES['pkcs12'])) {
 	// send request to CA server
 	$response = shell_exec("/var/www/html/bash/ca_client.py RP $uid {$_FILES['pkcs12']['tmp_name']}");
 	// confirm revocation
@@ -34,7 +34,7 @@ if (isset($_FILES['cert'], $_FILES['pkey']) && wasSent($_FILES['cert']) && wasSe
 	Or, </br>
 	<form action="?page=revoke" method="post" enctype="multipart/form-data">
 		Upload a PKCS12 archive to be revoked:<br />
-		<b>PKCS12 Archive:</b> <input type="file" name="pkcs12" id="cert"><br />
+		<b>PKCS12 Archive:</b> <input type="file" name="pkcs12" id="pkcs12"><br />
 		<input type="submit" value="Revoke Certificate" name="submit"><br />
 	</form>	
 	<br />
