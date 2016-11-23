@@ -2,6 +2,13 @@
 error_reporting(-1);
 ini_set('display_errors', 'On');
 ini_set('file_uploads', 'On');
+
+if($_SERVER["HTTPS"] != "on")
+{
+    header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
+    exit();
+}
+
 $mysql = new mysqli("localhost", "root", "onlyone!1", "imovies");
 session_start();
 
