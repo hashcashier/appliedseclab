@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#Script to send files to backup
+
+#Send certificates to backup and delete 
+rsync -av -e ssh /home/imovies/appliedseclab/bash/certs guest@backup:/home/guest/caCerts/
+#Remove client private keys
+rm /home/imovies/appliedseclab/bash/certs/*/*.key.pem
+
+#Send logs to backup
+rsync -av -e ssh /var/log/journal/ guest@backup:/home/guest/caLogs/
+
+#Send configuration and source code files to backup
+rsync -av -e ssh /etc/systemd/system/ca_server.service guest@backup:/home/guest/caConfigs/ca_server.service
+rsync -av -e ssh /home/imovies/appliedseclab/cav3.py guest@backup:/home/guest/caConfigs/cav3.py
+
+#launch safeguard executable
+ssh -t guest@backup "/home/guest/safeguard"
