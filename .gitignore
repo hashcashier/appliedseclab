@@ -2,3 +2,4 @@
 *.p12
 stats
 crl.pem
+*.swp
