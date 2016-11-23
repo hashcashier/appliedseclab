@@ -31,6 +31,7 @@ EXIT_CODE=$?
 
 #Remove the temporary files
 rm certs/tmp/${FQDN}_test_key.pub certs/tmp/${FQDN}_test_cert.pub
+rm ${KEYFILE}
 
 #Return exit code, if 0 then they are the same
 echo ${EXIT_CODE}

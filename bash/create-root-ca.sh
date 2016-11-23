@@ -7,7 +7,10 @@ mkdir demoCA
 echo "01" > certs/ca/my-root-ca.srl
 echo "01" > demoCA/crlnumber
 echo "01" > demoCA/serial
+echo "0" > demoCA/generated
+echo "0"> demoCA/revoked
 touch demoCA/index.txt
+touch demoCA/stats
 
 # Create your very own Root Certificate Authority
 openssl genrsa \
