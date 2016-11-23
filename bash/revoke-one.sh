@@ -7,7 +7,6 @@
 
 #The crl, saved under certs/crl/my-root-crl.pem is to be scp to the WS
 
-
 FILENAME=$1
 
 #revoke given certificate
@@ -25,6 +24,7 @@ openssl ca \
 
 #one has been revoked, modify revoked file
 gawk -i inplace '{$1=$1+1}1' demoCA/revoked
+
 
 #delete files
 rm ${FILENAME}

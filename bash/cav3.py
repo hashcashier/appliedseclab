@@ -13,7 +13,7 @@ import ssl
 from os import getcwd
 from os.path import join
 
-buf=4096
+buf=10000
 home_dir ="/home/imovies/appliedseclab/bash/"
 #home_dir="/home/diane/Documents/ETH/SecLab/project/code/appliedseclab/bash/"
 
@@ -36,19 +36,37 @@ class ClientThread(threading.Thread):
     parts = data.split("_",1)
     flag = parts[0]
     data = parts[1]
-    
+    print data
+    dict_={}
+    strings = []
     #check if valid request
-    if flag not in {"G", "R", "RA", "S"}:
+    if flag not in {"G", "R", "RA", "S", "RP"}:
 	return
     #load the json string as a dictionary
-    try:
-      dict_=json.loads(data)
-    except ValueError:
-      print "Wrong JSON encoding"
-      return -1
-    except: 
-      print "unexpected JSON decoding error"
-      return -1
+    if flag in {"G","S", "RA"}: #Flags that can load as json
+      try:
+        dict_=json.loads(data)
+      except ValueError:
+        print "Wrong JSON encoding"
+        return -1
+      except: 
+        print "unexpected JSON decoding error"
+        return -1
+    elif flag=="R": #Sending two raw data files, can't json encode
+      strings=data.split(">>>>>>VERY OBVIOUS SEPARATOR<<<<<<",2)
+      #print strings
+      uname = strings[0]
+      cert_str=strings[1]
+      pkey_str=strings[2]
+      dict_["uname"]=uname
+      dict_["cert"]=cert_str
+      dict_["pkey"]=pkey_str
+    elif flag=="RP": #Sending one raw data file, can't json encode
+      strings=data.split(">>>>>>VERY OBVIOUS SEPARATOR<<<<<<",1)
+      uname=strings[0]
+      p12=strings[1]
+      dict_["uname"]=uname
+      dict_["p12"]=p12
     """
     Here we check that the necessary arguments are given. 
     G arguments : 	uname
@@ -93,39 +111,62 @@ class ClientThread(threading.Thread):
 	#returning -1 as error
 	return -1
       else: #This means we want to delete specific key
-        #TODO save cert and pkey temporarily to files
+        # save cert and pkey temporarily to files
         cert_str = dict_["cert"]
 	pkey_str = dict_["pkey"]
 	fd=open(join(home_dir,uname+".rev-cert"), "wb")
 	fd.write(cert_str)
 	fd.close()
 	kd=open(join(home_dir,uname+".rev-key"), "wb")
-	kd.write(key_str)
+	kd.write(pkey_str)
 	kd.close()
 	#verify they match
-	match=subprocess.call(home_dir+"verify-cert-key.sh "+home_dir+uname+".rev-cert "+home_dir+uname+".rev-key", shell=True)
+	match=subprocess.call(home_dir+"verify-cert-key.sh "+uname+" "+home_dir+uname+".rev-cert "+home_dir+uname+".rev-key", shell=True)
 	print match
-	#TODO call bash revoke script
+	#call bash revoke script
 	exitcode=subprocess.call(home_dir+"revoke-one.sh "+home_dir+uname+".rev-cert", shell=True)
 	print exitcode
 	if not exitcode: #finished with no problem
-	  #open corresponding .p12 file
+	  #open crl file
 	  fd = open(join(home_dir, "certs/crl/my-root-crl.pem"), "rb")
 	  resp = fd.read()
 	  fd.close()
 	  return resp
 	else:#error
 	  return -1
+    elif flag=="RP":
+      if not dict_.has_key("uname") or not dict_.has_key("p12"):
+	#returning -1 as error
+	print "NOTHING"
+	return -1
+      else: #This means delete cert is p12 file
+        p12_str = dict_["p12"]
+	fd=open(join(home_dir,uname+".rev-p12"),"wb")
+	fd.write(p12)
+	fd.close()
+	#get certificate from p12
+        getcert=subprocess.call(home_dir+"cert-from-pkcs12.sh "+home_dir+uname+".rev-p12 "+home_dir+uname+".rev-cert", shell=True)
+	print "GOT CERTIFICATE"
+	#call bash revoke script
+	exitcode=subprocess.call(home_dir+"revoke-one.sh "+home_dir+uname+".rev-cert",shell=True)
+	if not exitcode: #finished wth no problem
+	  #open crl file
+	  fd = open(join(home_dir, "certs/crl/my-root-crl.pem"),"rb")
+	  resp=fd.read()
+	  fd.close()
+	  return resp
+	else: #error
+	  return -1
     elif flag=="RA":
       if not dict_.has_key("uname"):
         #returning -1 as error
 	return -1
       else: #We can revoke all certificates for user "uname"
-        #TODO call bash script revoke-all.sh uname
+        #call bash script revoke-all.sh uname
 	exitcode=subprocess.call(home_dir+"revoke-all.sh "+dict_["uname"], shell=True)
 	print exitcode
 	if not exitcode: #finished with no problem
-	  #open corresponding .p12 file
+	  #open crl file
 	  fd = open(join(home_dir, "certs/crl/my-root-crl.pem"), "rb")
 	  resp = fd.read()
 	  fd.close()
@@ -139,7 +180,7 @@ class ClientThread(threading.Thread):
       
     # receive and parse data
     data = self.socket.recv(buf)
-    print "Received: "+data
+    #print "Received: "+data
     resp = self.parse(data)
     if resp==-1:
       resp = "error"
@@ -167,7 +208,7 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print "[+]Socket created on host %s port %d" %server_address
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) #so no 'address already in use' after crash
 
-sock = ssl.wrap_socket(s, certfile="/home/imovies/appliedseclab/certs/ca.crt", keyfile="/home/imovies/appliedseclab/certs/ca.key", server_side=True, do_handshake_on_connect=False)
+sock = ssl.wrap_socket(s, certfile="/home/imovies/appliedseclab/bash/certs/ca/my-root-ca.crt.pem", keyfile="/home/imovies/appliedseclab/bash/certs/ca/my-root-ca.key.pem", server_side=True, do_handshake_on_connect=False)
 
 #Bind socket to local host and port
 try:

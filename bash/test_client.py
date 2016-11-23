@@ -4,6 +4,7 @@ import sys
 from os.path import join
 from os import getcwd
 import ssl
+import base64
 
 #directory in which to save files
 client_dir = join(getcwd(),"client")
@@ -41,21 +42,40 @@ elif flag == "G":
   adminFlag=sys.argv[4]
   message = flag+'_'+'{"uname":"'+uname+'","CN":"'+uname+'","email":"'+email+'","O":"iMovies","OU":"'+adminFlag+'"}'
 elif flag=="R":
-  dict_=sys.argv[2]
-  message = flag+'_'+dict_
+  uname=sys.argv[2]
+  cert_path=sys.argv[3]
+  pkey_path=sys.argv[4]
+  fd=open(cert_path, "rb")
+  cert = fd.read()
+  fd.close()
+  kd=open(pkey_path, "rb")
+  pkey = kd.read()
+  kd.close()
+  message = flag+'_'+uname+'>>>>>>VERY OBVIOUS SEPARATOR<<<<<<'+cert+'>>>>>>VERY OBVIOUS SEPARATOR<<<<<<'+pkey
+  print message
+elif flag=="RP":
+  uname = sys.argv[2]
+  p12_path = sys.argv[3]
+  fd = open(p12_path, "rb")
+  p12 = fd.read()#base64.b64encode(fd.read())
+  fd.close()
+  message = flag+'_'+uname+'>>>>>>VERY OBVIOUS SEPARATOR<<<<<<'+p12
+  #print message
 elif flag=="RA":
   uname=sys.argv[2]
   message = flag+'_'+'{"uname":"'+uname+'"}'
-
+else:
+  print "Wrong arguments, closing"
+  sys.exit()
 #file to save response at
-filename = "crl.pem" if (flag=="R" or flag=="RA") else uname+".cert.p12"
+filename = uname+"cert.pem" if flag=="G" else "crl.pem"
 
 #Create TCP/IP socket
 s = ssl.wrap_socket(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
 
 #connecting to the CA
-server_address = ('192.168.2.246', 8888)
-#server_address = ('localhost', 8888) #TODO change address and port number
+#server_address = ('192.168.2.246', 8888)
+server_address = ('localhost', 8888) #TODO change address and port number
 #print 'Trying to connect to server at %s on port %d' % server_address
 s.connect(server_address)
 

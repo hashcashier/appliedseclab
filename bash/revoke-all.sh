@@ -16,10 +16,8 @@ for filename in certs/users/${FQDN}/*.crt.pem; do
   echo $filename
   #revoke given certificate
   EXITCODE=$(openssl ca -cert certs/ca/my-root-ca.crt.pem -keyfile certs/ca/my-root-ca.key.pem -revoke "$filename")
-  echo ${EXITCODE}
   MODIFIED=$(gawk -i inplace '{$1=$1+1}1' demoCA/revoked)
   #remove cert to avoid revoking multiple times
-  rm $filename 
 done
 
 # generate new crl
