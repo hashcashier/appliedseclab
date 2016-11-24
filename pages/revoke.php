@@ -11,16 +11,19 @@ function wasSent($file) {
 if (isset($_FILES['cert'], $_FILES['pkey']) && wasSent($_FILES['cert']) && wasSent($_FILES['pkey'])) {
 	// send request to CA server
 	$response = shell_exec("/var/www/html/bash/ca_client.py R $uid {$_FILES['cert']['tmp_name']} {$_FILES['pkey']['tmp_name']}");
+	shell_exec("/var/www/html/bash/copy-crl.sh");
 	// confirm revocation
 	print("Success");
 } else if (isset($_FILES['pkcs12']) && wasSent($_FILES['pkcs12'])) {
 	// send request to CA server
 	$response = shell_exec("/var/www/html/bash/ca_client.py RP $uid {$_FILES['pkcs12']['tmp_name']}");
+	shell_exec("/var/www/html/bash/copy-crl.sh");
 	// confirm revocation
 	print("Success");
 } else if (isset($_GET['all']) && $_GET['all'] == '1') {
 	// send request to CA server
 	$response = shell_exec("/var/www/html/bash/ca_client.py RA {$user['uid']}");
+	shell_exec("/var/www/html/bash/copy-crl.sh");
 	// confirm revocation
 	print("Success");
 } else {
