@@ -5,21 +5,21 @@
 BKP=192.168.2.99
 TIMESTAMP=$(date +"%N")
 
-ssh -t guest@$BKP "mkdir -p /home/guest/backup/${TIMESTAMP}/caCerts"
-ssh -t guest@$BKP "mkdir -p /home/guest/backup/${TIMESTAMP}/caLogs"
-ssh -t guest@$BKP "mkdir -p /home/guest/backup/${TIMESTAMP}/caConfigs"
+ssh -t guest@$BKP "mkdir -p /home/imovies/backup/${TIMESTAMP}/caCerts"
+ssh -t guest@$BKP "mkdir -p /home/imovies/backup/${TIMESTAMP}/caLogs"
+ssh -t guest@$BKP "mkdir -p /home/imovies/backup/${TIMESTAMP}/caConfigs"
 
 #Send certificates to backup and delete 
-rsync -av -e ssh /home/imovies/appliedseclab/bash/certs guest@$BKP:/home/guest/backup/${TIMESTAMP}/caCerts/
+rsync -av -e ssh /home/imovies/appliedseclab/bash/certs guest@$BKP:/home/imovies/backup/${TIMESTAMP}/caCerts/
 #Remove client private keys
 rm /home/imovies/appliedseclab/bash/certs/users/*.key.pem
 
 #Send logs to backup
-rsync -av -e ssh /var/log/journal/ guest@$BKP:/home/guest/backup/${TIMESTAMP}/caLogs/
+rsync -av -e ssh /var/log/journal/ guest@$BKP:/home/imovies/backup/${TIMESTAMP}/caLogs/
 
 #Send configuration and source code files to backup
-rsync -av -e ssh /etc/systemd/system/ca_server.service guest@$BKP:/home/guest/backup/${TIMESTAMP}/caConfigs/ca_server.service
-rsync -av -e ssh /home/imovies/appliedseclab/cav3.py guest@$BKP:/home/guest/backup/${TIMESTAMP}/caConfigs/cav3.py
+rsync -av -e ssh /etc/systemd/system/ca_server.service guest@$BKP:/home/imovies/backup/${TIMESTAMP}/caConfigs/ca_server.service
+rsync -av -e ssh /home/imovies/appliedseclab/cav3.py guest@$BKP:/home/imovies/backup/${TIMESTAMP}/caConfigs/cav3.py
 
 #launch safeguard executable
 ssh -t guest@$BKP "/home/guest/safeguard"

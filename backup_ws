@@ -5,21 +5,21 @@
 backup=192.168.2.99
 TIMESTAMP=$(date +"%N")
 
-ssh -t guest@$backup "mkdir -p /home/guest/backup/${TIMESTAMP}/apacheLogs"
-ssh -t guest@$backup "mkdir -p /home/guest/backup/${TIMESTAMP}/sqlLogs"
-ssh -t guest@$backup "mkdir -p /home/guest/backup/${TIMESTAMP}/db"
+ssh -t guest@$backup "mkdir -p /home/imovies/backup/${TIMESTAMP}/apacheLogs"
+ssh -t guest@$backup "mkdir -p /home/imovies/backup/${TIMESTAMP}/sqlLogs"
+ssh -t guest@$backup "mkdir -p /home/imovies/backup/${TIMESTAMP}/db"
 
 #Send apache logs
-rsync -av -e ssh /var/log/apache2/ guest@$backup:/home/guest/backup/${TIMESTAMP}/apacheLogs/
+rsync -av -e ssh /var/log/apache2/ guest@$backup:/home/imovies/backup/${TIMESTAMP}/apacheLogs/
 #Remove zipped logs
 rm /var/log/apache2/*.gz
 
 #Send mysql logs to backup
-rsync -av -e ssh /var/log/mysql/ guest@$backup:/home/guest/backup/${TIMSTAMP}/sqlLogs/
+rsync -av -e ssh /var/log/mysql/ guest@$backup:/home/imovies/backup/${TIMSTAMP}/sqlLogs/
 
 #dump database and send dump file to backup
 mysqldump -u root -ponlyone!1 imovies > /tmp/db.sql 
-scp /tmp/db.sql guest@$backup:/home/guest/backup/${TIMESTAMP}/db/db.sql
+scp /tmp/db.sql guest@$backup:/home/imovies/backup/${TIMESTAMP}/db/db.sql
 rm /tmp/db.sql
 
 #launch executable that makes everything owned by root and mode 600 permissions
