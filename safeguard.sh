@@ -1,6 +1,5 @@
 #!/bin/bash
 
-for filename in /home/guest/backup/*/*; do
-  chown root $filename
-  chmod 600 $filename
-done
+find /home/guest -path '/home/guest/backup/*' -type f -exec chmod 600 {} \;
+find /home/guest -path '/home/guest/backup/*' -type f -exec chown root:root {} \;
+
