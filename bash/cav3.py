@@ -123,6 +123,8 @@ class ClientThread(threading.Thread):
 	#verify they match
 	match=subprocess.call(home_dir+"verify-cert-key.sh "+uname+" "+home_dir+uname+".rev-cert "+home_dir+uname+".rev-key", shell=True)
 	print match
+        if match:
+          return -1
 	#call bash revoke script
 	exitcode=subprocess.call(home_dir+"revoke-one.sh "+home_dir+uname+".rev-cert", shell=True)
 	print exitcode
