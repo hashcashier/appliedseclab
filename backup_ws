@@ -2,18 +2,20 @@
 
 #Script to send files to backup
 
+backup=192.168.2.99
+
 #Send apache logs
-rsync -av -e ssh /var/log/apache2/ guest@backup:/home/guest/apacheLogs/
+rsync -av -e ssh /var/log/apache2/ guest@$backup:/home/guest/apacheLogs/
 #Remove zipped logs
 rm /var/log/apache2/*.gz
 
 #Send mysql logs to backup
-rsync -av -e ssh /var/log/mysql/ guest@backup:/home/guest/sqlLogs/
+rsync -av -e ssh /var/log/mysql/ guest@$backup:/home/guest/sqlLogs/
 
 #dump database and send dump file to backup
 mysqldump -u root -ponlyone!1 imovies > /tmp/db.sql 
-scp /tmp/db.sql guest@backup:/home/guest/db/db.sql
+scp /tmp/db.sql guest@$backup:/home/guest/db/db.sql
 rm /tmp/db.sql
 
 #launch executable that makes everything owned by root and mode 600 permissions
-ssh -t guest@backup "/home/guest/safeguard"
+ssh -t guest@$backup "/home/guest/safeguard"
