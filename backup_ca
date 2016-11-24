@@ -15,7 +15,7 @@ rsync -av -e ssh /home/imovies/appliedseclab/bash/certs guest@$BKP:/home/imovies
 rm /home/imovies/appliedseclab/bash/certs/users/*.key.pem
 
 #Send logs to backup
-rsync -av -e ssh /var/log/journal/ guest@$BKP:/home/imovies/backup/${TIMESTAMP}/caLogs/
+rsync -av -e ssh /run/log/journal/ guest@$BKP:/home/imovies/backup/${TIMESTAMP}/caLogs/
 
 #Send configuration and source code files to backup
 rsync -av -e ssh /etc/systemd/system/ca_server.service guest@$BKP:/home/imovies/backup/${TIMESTAMP}/caConfigs/ca_server.service
