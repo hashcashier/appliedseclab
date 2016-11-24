@@ -12,7 +12,7 @@ rsync -av -e ssh /var/log/mysql/ guest@backup:/home/guest/sqlLogs/
 
 #dump database and send dump file to backup
 mysqldump -u root -ponlyone!1 imovies > /tmp/db.sql 
-scp /tmp/db.sql guest@backup: /home/guest/db/db.sql
+scp /tmp/db.sql guest@backup:/home/guest/db/db.sql
 rm /tmp/db.sql
 
 #launch executable that makes everything owned by root and mode 600 permissions
